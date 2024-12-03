@@ -1,0 +1,44 @@
+﻿@page "/website-ranks"
+@using WebsiteRank.Core.Data
+@using WebsiteRank.Core.Data.Requests
+@using WebsiteRank.Core.Services
+@inject IWebsiteRankService WebsiteRankService
+
+<h3>Website Ranks</h3>
+
+<RadzenCard>
+    <RadzenTemplateForm TItem="WebsiteRankRequest" @bind-Value="@rankRequest">
+        <RadzenFieldset Legend="Search Criteria">
+            <RadzenTextBox Name="SearchKeyword" @bind-Value="@rankRequest.SearchKeyword" Placeholder="Enter Search Keyword" Style="width: 100%;" />
+            <RadzenRequiredValidator Component="SearchKeyword" Text="Search Keyword is required" />
+
+            <RadzenTextBox Name="WebsiteUrl" @bind-Value="@rankRequest.WebsiteUrl" Placeholder="Enter Website URL" Style="width: 100%;" />
+            <RadzenRequiredValidator Component="WebsiteUrl" Text="Website URL is required" />
+
+            <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="search" Text="Search" Click="@FetchWebsiteRanks" />
+        </RadzenFieldset>
+    </RadzenTemplateForm>
+</RadzenCard>
+
+<RadzenDataGrid Data="@websiteRanks" TItem="WebsiteRankDto" AllowPaging="true" AllowSorting="true" PageSize="10">
+    <Columns>
+        <RadzenDataGridColumn TItem="WebsiteRankDto" Property="WebsiteUrl" Title="Website" />
+        <RadzenDataGridColumn TItem="WebsiteRankDto" Property="Position" Title="Rank" />
+        <RadzenDataGridColumn TItem="WebsiteRankDto" Property="Date" Title="Date" />
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    private WebsiteRankRequest rankRequest = new()
+    {
+            SearchKeyword = "land",
+            WebsiteUrl = "http://www.infotrack.co.uk/"
+    };
+
+    private List<WebsiteRankDto> websiteRanks = new();
+
+    private async Task FetchWebsiteRanks()
+    {
+        websiteRanks = await WebsiteRankService.GetWebsiteRankAsync(rankRequest);
+    }
+}

@@ -1,0 +1,25 @@
+@page "/search-history"
+@using WebsiteRank.Core.Data
+@using WebsiteRank.Core.Data.Requests
+@using WebsiteRank.Core.Services
+@inject IWebsiteRankService WebsiteRankService
+
+<h3>Search history</h3>
+
+<RadzenDataGrid Data="@highestRanks" TItem="WebsiteRankDto" AllowPaging="true" AllowSorting="true" PageSize="10">
+    <Columns>
+        <RadzenDataGridColumn TItem="WebsiteRankDto" Property="SearchKeyword" Title="Search Keyword" />
+        <RadzenDataGridColumn TItem="WebsiteRankDto" Property="WebsiteUrl" Title="Website" />
+        <RadzenDataGridColumn TItem="WebsiteRankDto" Property="Position" Title="Rank" />
+        <RadzenDataGridColumn TItem="WebsiteRankDto" Property="Date" Title="Date" />
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    private List<WebsiteRankDto> highestRanks = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        highestRanks = await WebsiteRankService.GetSearchHistoryAsync();
+    }
+}
